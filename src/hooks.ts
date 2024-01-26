@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react'
+import {useState, useEffect, CSSProperties} from 'react'
 
 export const useInterval = (cb : () => void, delay : number) => {
     useEffect(() => {
@@ -32,5 +32,129 @@ export const useAngles = () => {
         secondAngle,
         minuteAngle, 
         hourAngle
+    }
+}
+
+export interface ContainerStyle {
+    parentStyle : CSSProperties, 
+    elementStyle : CSSProperties, 
+}
+export interface UseStyleProp {
+    parentStyle() : CSSProperties
+    hourTextStyle(i : number) : ContainerStyle
+    hourLineStyle() : ContainerStyle
+    minuteLineStyle() : ContainerStyle 
+    secondLineStyle() : ContainerStyle
+    clockCircleStyle(color : string) : CSSProperties
+}
+
+export const useStyles = (color : string) : UseStyleProp => {
+    const position = 'absolute'
+    const w : number = window.innerWidth
+    const h : number = window.innerHeight 
+    const size : number = Math.min(w, h) / 8 
+    const rotate = (deg : number) : CSSProperties => ({
+        position, 
+        transform: `rotate(${deg}deg)`
+    })
+    const hourThickness = 15
+    const minuteThickness = 50
+    const secondThickness = 90
+    
+    const hourLengthFactor = 6
+    const minuteLengthFactor = 2.5 
+    const secondLengthFactor = 1.2 
+
+    const background = color 
+  
+    const {hourAngle, secondAngle, minuteAngle} = useAngles()
+    
+    return {
+        parentStyle() : CSSProperties {
+            return {
+                position: 'absolute',
+                left: `${w / 2}px`,
+                top: `${h / 2}px`,
+            }
+        },
+
+        hourTextStyle(i : number) : ContainerStyle {
+            return {
+                parentStyle: {...rotate(360 * (i / 12))},
+                elementStyle: {
+                    fontSize: '16px',
+                    color: 'black',
+                }
+            }
+        },
+
+        hourLineStyle() : ContainerStyle {
+            const wHour = size / hourThickness
+            const hHour = size / hourLengthFactor 
+            const top = `${-hHour}px`
+            const left = `${-wHour / 2}px`
+            const width = `${wHour}px`
+            const height = `${hHour}px`
+            return {
+                parentStyle: {...rotate(hourAngle)},
+                elementStyle: {
+                    position,
+                    left,
+                    top,
+                    width, 
+                    height, 
+                    background 
+                }
+            }
+        },
+        minuteLineStyle() : ContainerStyle {
+            const wMin = size / minuteThickness
+            const hMin = size / minuteLengthFactor 
+            const top = `${-hMin}px`
+            const left = `${-wMin / 2}px`
+            const width = `${wMin}px`
+            const height = `${hMin}px`
+            return {
+                parentStyle: {...rotate(minuteAngle)},
+                elementStyle: {
+                    position,
+                    left,
+                    top,
+                    width, 
+                    height, 
+                    background 
+                }
+            }
+        },
+
+        secondLineStyle() : ContainerStyle {
+            const wSec = size / minuteThickness
+            const hSec = size / minuteLengthFactor 
+            const top = `${-hSec}px`
+            const left = `${-wSec / 2}px`
+            const width = `${wSec}px`
+            const height = `${hSec}px`
+            return {
+                parentStyle: {...rotate(secondAngle)},
+                elementStyle: {
+                    position,
+                    left,
+                    top,
+                    width, 
+                    height, 
+                    background 
+                }
+            }
+        },
+        clockCircleStyle() : CSSProperties {
+            return {
+                position: 'absolute',
+                top: `${-size / 2}px`,
+                left: `${-size / 2}px`,
+                width: `${size}px`,
+                height: `${size}px`,
+                border: `2px solid ${color}`
+            }
+        }
     }
 }
