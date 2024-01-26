@@ -35,10 +35,35 @@ export const useAngles = () => {
     }
 }
 
+export interface DimensionProps {
+    w : number, 
+    h : number 
+}
+
+export const useDimension = () : DimensionProps => {
+    const [w, setW] = useState(window.innerWidth)
+    const [h, setH] = useState(window.innerHeight)
+    useEffect(() => {
+        const resizeListener = () => {
+            setW(window.innerWidth)
+            setH(window.innerHeight)
+        }
+        window.addEventListener('resize', resizeListener, false)
+        return () => {
+            window.removeEventListener('resize', resizeListener)
+        }
+    }, [])
+    return {
+        w, 
+        h
+    }
+}
+
 export interface ContainerStyle {
     parentStyle : CSSProperties, 
     elementStyle : CSSProperties
 }
+
 export interface UseStyleProp {
     parentStyle() : CSSProperties
     hourTextStyle(i : number) : ContainerStyle
@@ -50,9 +75,8 @@ export interface UseStyleProp {
 
 export const useStyles = (color : string) : UseStyleProp => {
     const position = 'absolute'
-    const w : number = window.innerWidth
-    const h : number = window.innerHeight 
-    const size : number = Math.min(w, h) / 4 
+    const {w, h} = useDimension()
+    const size : number = Math.min(w, h) / 2
     const rotate = (deg : number) : CSSProperties => ({
         position, 
         transform: `rotate(${deg}deg)`
@@ -87,7 +111,8 @@ export const useStyles = (color : string) : UseStyleProp => {
                     color: 'black',
                     position, 
                     left: `0px`,
-                    top: `${-size / hourTextLengthFactor}px`
+                    top: `${-size / hourTextLengthFactor}px`,
+                    transform: `rotate(${-360 * (i / 12)}deg)`
                 }
             }
         },
