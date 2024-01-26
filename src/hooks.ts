@@ -1,4 +1,4 @@
-import {useState, useEffect, CSSProperties} from 'react'
+import React, {useState, useEffect, CSSProperties} from 'react'
 
 export const useInterval = (cb : () => void, delay : number) => {
     useEffect(() => {
@@ -37,7 +37,7 @@ export const useAngles = () => {
 
 export interface ContainerStyle {
     parentStyle : CSSProperties, 
-    elementStyle : CSSProperties, 
+    elementStyle : CSSProperties
 }
 export interface UseStyleProp {
     parentStyle() : CSSProperties
@@ -45,14 +45,14 @@ export interface UseStyleProp {
     hourLineStyle() : ContainerStyle
     minuteLineStyle() : ContainerStyle 
     secondLineStyle() : ContainerStyle
-    clockCircleStyle(color : string) : CSSProperties
+    clockCircleStyle() : CSSProperties
 }
 
 export const useStyles = (color : string) : UseStyleProp => {
     const position = 'absolute'
     const w : number = window.innerWidth
     const h : number = window.innerHeight 
-    const size : number = Math.min(w, h) / 8 
+    const size : number = Math.min(w, h) / 4 
     const rotate = (deg : number) : CSSProperties => ({
         position, 
         transform: `rotate(${deg}deg)`
@@ -61,12 +61,13 @@ export const useStyles = (color : string) : UseStyleProp => {
     const minuteThickness = 50
     const secondThickness = 90
     
-    const hourLengthFactor = 6
-    const minuteLengthFactor = 2.5 
-    const secondLengthFactor = 1.2 
+    const hourLengthFactor = 5.6
+    const minuteLengthFactor = 3.4
+    const secondLengthFactor = 2.6
 
     const background = color 
   
+    const hourTextLengthFactor = 2.3
     const {hourAngle, secondAngle, minuteAngle} = useAngles()
     
     return {
@@ -84,6 +85,9 @@ export const useStyles = (color : string) : UseStyleProp => {
                 elementStyle: {
                     fontSize: '16px',
                     color: 'black',
+                    position, 
+                    left: `0px`,
+                    top: `${-size / hourTextLengthFactor}px`
                 }
             }
         },
@@ -103,7 +107,8 @@ export const useStyles = (color : string) : UseStyleProp => {
                     top,
                     width, 
                     height, 
-                    background 
+                    background,
+                    borderRadius: '15%' 
                 }
             }
         },
@@ -122,14 +127,15 @@ export const useStyles = (color : string) : UseStyleProp => {
                     top,
                     width, 
                     height, 
-                    background 
+                    background,
+                    borderRadius: '10%'
                 }
             }
         },
 
         secondLineStyle() : ContainerStyle {
-            const wSec = size / minuteThickness
-            const hSec = size / minuteLengthFactor 
+            const wSec = size / secondThickness
+            const hSec = size / secondLengthFactor 
             const top = `${-hSec}px`
             const left = `${-wSec / 2}px`
             const width = `${wSec}px`
@@ -153,7 +159,8 @@ export const useStyles = (color : string) : UseStyleProp => {
                 left: `${-size / 2}px`,
                 width: `${size}px`,
                 height: `${size}px`,
-                border: `2px solid ${color}`
+                border: `2px solid ${color}`,
+                borderRadius: '50%'
             }
         }
     }
