@@ -27,7 +27,7 @@ export const useAngles = () => {
     const {s, h, m} = useContinuousTime()
     const secondAngle = Math.floor(360 * (s / 60))
     const minuteAngle = Math.floor(360 * (m * 60 + s) / 3600)
-    const hourAngle = Math.floor(360 * (h * 3600 + m * 60 + s) / (3600 * 12))
+    const hourAngle = Math.floor(360 * (h * 60 + m) / (60 * 12))
     return {
         secondAngle,
         minuteAngle, 
